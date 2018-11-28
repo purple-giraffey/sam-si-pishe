@@ -3,21 +3,27 @@
 
 import random
 import os
+import re
+
+from find_syllables import split_in_syllables
 
 with open('teksts.txt', 'r', encoding = "utf8") as f:
     tekst = f.read()
 
 def split_in_celini(text):
     text = text.lower()
-    break_chars = "!?.,\n;–-"
-    ignore_chars = "\"„“”'*%$}{()[]0123456789><"
+    break_chars = "!?.,\n;–-…—:"
+    ignore_chars = "\"„“”'*%$}{()[]0123456789><«"
     celini = []
     celina = []
     for letter in text:
         if letter in break_chars:
-            c = "".join(celina).strip().split(" ")
-            if c != [''] and c != [' ']:
-                celini.append(c)
+            joined = "".join(celina)
+            if joined == '':
+                continue
+            stripped = joined.strip()
+            split = re.split('\s+', stripped)
+            celini.append(split)
             celina = []
         elif letter in ignore_chars:
             celina.append(" ")
@@ -25,50 +31,70 @@ def split_in_celini(text):
             celina.append(letter)
     return celini
 
-"""def find_successors(word_list):
-    successors = {}
-    for i, word in enumerate(word_list):
-        if i == len(word_list)-1:
-            break
-        elif word in successors:
-            successors[word].append(word_list[i+1])
-        else:
-            successors[word] = [word_list[i+1]]
-    return successors"""
+def find_successors(celini, max_n=2):
+    '''
+    Generates Markov chains of length max_n. Returns a dict
+    of tupples in which the tupples have length from 1 to max_n.
 
-def find_successors_advanced(celini):
+    If we're going though this word list and i=1:
+
+               current
+                  |
+        ['this', 'is', 'a', 'chain', 'of', 'words']
+
+    and word_list_len is 6, then the max_possible_n is 4, namely:
+
+    { ('is', 'a', 'chain', 'of'): ['words'] }
+
+    the shortest is:
+
+    { ('is'): ['a'] }
+
+    The calculation for max_possible_n is: len(word_list) - i - 1
+    '''
     successors = {}
     for word_list in celini:
-        for i, first in enumerate(word_list):
-            if i >= len(word_list)-2:
-                break
-            second = word_list[i+1]
-            succ = word_list[i+2]
-            if (first, second) in successors:
-                successors[(first, second)].append(succ)
-            else:
-                successors[(first, second)] = [succ]
+        word_list_len = len(word_list)
+        for i in range(word_list_len):
+            max_possible_n = word_list_len - i - 1
+            for n in range(0, min(max_possible_n, max_n)):
+                key = tuple(word_list[i:i+n+1])
+                val = word_list[i+n+1]
+                if key in successors:
+                    successors[key].append(val)
+                else:
+                    successors[key] = [val]
     return successors
 
-clean_split_tekst = split_in_celini(tekst)
-successors = find_successors_advanced(split_in_celini(tekst))
-# predecessors = find_successors_advanced(clean_split_tekst[::-1])
-
-def generate_meaningful_wordlist(first_second, successors, max_length):
-    first, second = first_second
-    meaningful_wordlist = [first, second]
-    for _ in range(max_length-1):
-        if first_second in successors:
-            next_word = random.choice(successors[first_second])
+def generate_meaningful_wordlist(ending_words_tuple, successors):
+    counter = 0 # just in case...
+    meaningful_wordlist = list(ending_words_tuple)
+    while len(ending_words_tuple) and counter < 1 * 1000 * 1000 and len(meaningful_wordlist) < 100:
+        counter += 1
+        if ending_words_tuple in successors:
+            next_word = random.choice(successors[ending_words_tuple])
             meaningful_wordlist.append(next_word)
-            first_second = (second, next_word)
+            ending_words_tuple = ending_words_tuple[1:] + (next_word,)
         else:
-            for (a, b) in successors:
-                if a == second:
-                    next_word = random.choice(successors[(a, b)])
-                    meaningful_wordlist.extend([b, next_word])
-                    first_second = (b, next_word)
-                    break
+            ending_words_tuple = ending_words_tuple[1:]
     return meaningful_wordlist
 
-#print (generate_meaningful_wordlist(("како", "си"), successors, 8))
+celini = split_in_celini(tekst)
+celini_slogovi = []
+for word_list in celini:
+    slogovi = []
+    if word_list == ['']:
+        continue
+    for word in word_list:
+        slogovi.extend(split_in_syllables(word)[0])
+        slogovi.extend(' ')
+    celini_slogovi.append(slogovi)
+    slogovi = []
+
+# print(celini_slogovi[:10])
+# print(find_successors(celini_slogovi))
+successors = find_successors(celini_slogovi)
+
+# successors = find_successors(celini)
+# for _ in range(10):
+print("".join(generate_meaningful_wordlist(tuple(split_in_syllables("уморен")[0]), successors)))
