@@ -1,6 +1,10 @@
 import re
 import json
 import random
+import os
+
+script_dir = os.path.dirname(os.path.realpath(__file__))
+print(os.path.join(script_dir, 'mk-books-text.txt'))
 
 def split_in_celini(text):
     text = text.lower()
@@ -60,7 +64,7 @@ def find_successors(celini, max_n=5, successors = {}):
 successors = {}
 predecessors = {}
 counter = 0
-with open('mkwikinohead.txt', 'r', encoding = "utf8") as f:
+with open(os.path.join(script_dir, 'mk-books-text.txt'), 'r', encoding = "utf8") as f:
     for line in f.readlines():
         counter += 1
         if counter % 1000 == 0:

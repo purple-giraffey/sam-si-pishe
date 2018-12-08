@@ -7,21 +7,8 @@ import re
 
 from find_syllables import split_in_syllables
 from soundalike import sound_similarity_phrase
-from make_rhyme import find_rhymes
+from rhyme_producer import perfect_rhyme_producer, dict_of_rhymes
 from successors_predecessors_client import get_successors, get_predecessors, get_random_word
-
-def generate_meaningful_wordlist_old(ending_words_tuple, successors, max_len=4):
-    counter = 0 # just in case...
-    meaningful_wordlist = list(ending_words_tuple)
-    while len(ending_words_tuple) and counter < 1 * 1000 * 1000 and len(meaningful_wordlist) < max_len:
-        counter += 1
-        if ending_words_tuple in successors:
-            next_word = random.choice(successors[ending_words_tuple])
-            meaningful_wordlist.append(next_word)
-            ending_words_tuple = ending_words_tuple + (next_word,)
-        else:
-            ending_words_tuple = ending_words_tuple[1:]
-    return meaningful_wordlist
 
 def generate_meaningful_wordlist(ending_words_tuple, get_succ_or_pred, max_len=6):
     counter = 0 # just in case...
@@ -70,7 +57,7 @@ def find_string_that_rhymes_bruteforce(base_string):
     rand_word = get_random_word(from_which="successors")
     best_match = generate_meaningful_string(rand_word, get_successors)
     best_match_coef = sound_similarity_phrase(base_string, best_match)
-    first_word_rhymes = find_rhymes(base_string.split(" ")[0])
+    first_word_rhymes = perfect_rhyme_producer(base_string.split(" ")[0], dict_of_rhymes)
     for rhyme in first_word_rhymes:
         x = generate_meaningful_string((rhyme,), get_successors)
         print(x)
@@ -87,7 +74,7 @@ def make_poem(get_succ_or_pred):
     Being a poet.
     """
     initial_rhyme = get_random_word(from_which="predecessors")
-    list_of_rhymes = [initial_rhyme] + find_rhymes(initial_rhyme)
+    list_of_rhymes = [initial_rhyme] + perfect_rhyme_producer(initial_rhyme, dict_of_rhymes)
     lines = []
     print (list_of_rhymes)
     for rhyme in list_of_rhymes:
