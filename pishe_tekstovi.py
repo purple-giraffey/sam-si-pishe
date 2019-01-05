@@ -106,9 +106,9 @@ def make_poem(get_succ_or_pred):
 #for _ in range(100):
 #    print (_, generate_meaningful_string(("се", "вклучува"), successors))
 #print (find_string_that_rhymes(base_string))
-lines = make_poem(get_predecessors)
+"""lines = make_poem(get_predecessors)
 for line in lines:
-    print (line)
+    print (line)"""
 # print(get_random_word(from_which="predecessors"))
 
 # print(generate_meaningful_string(('нешто',), get_predecessors))

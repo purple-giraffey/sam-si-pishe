@@ -3,10 +3,10 @@ from os import path
 from soundalike import sound_similarity_phrase
 from find_syllables import is_vowel, count_vowels, vowel_extractor
 
-with open('zborovi.txt', encoding="utf8") as f:
-    list_of_words = f.readlines()
+#with open('zborovi.txt', encoding="utf8") as f:
+    #list_of_words = f.readlines()
 
-list_of_words = [word.strip() for word in list_of_words]
+#list_of_words = [word.strip() for word in list_of_words]
 
 def extract_rhyming_part(word, up_to_n_vowels=3):
     vowel_count = count_vowels(word)
@@ -33,7 +33,7 @@ def rhyming_dict_producer(list_of_words):
                 dict_of_rhymes[rhyming_part].append(word)
     return dict_of_rhymes
 
-dict_of_rhymes = rhyming_dict_producer(list_of_words)
+#dict_of_rhymes = rhyming_dict_producer(list_of_words)
 
 def same_vowels_dict_producer(list_of_words):
     '''
@@ -49,7 +49,7 @@ def same_vowels_dict_producer(list_of_words):
             dict_of_extracted_vowels[vowels_only].append(word)
     return dict_of_extracted_vowels
 
-extracted_vowels_dict = same_vowels_dict_producer(list_of_words)
+#extracted_vowels_dict = same_vowels_dict_producer(list_of_words)
 
 def perfect_rhyme_producer(word, dict_of_rhymes):
     # finding perfect rhymes
@@ -94,4 +94,4 @@ def rhyme_producer(word, dict_of_rhymes, extracted_vowels_dict):
     all_rhyme_candidates = {'perfect': perfect_rhymes_found, 'other': other_rhymes_found}
     return all_rhyme_candidates
 
-print (rhyme_producer('краставица', dict_of_rhymes, extracted_vowels_dict))
+#print (rhyme_producer('краставица', dict_of_rhymes, extracted_vowels_dict))
