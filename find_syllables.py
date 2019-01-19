@@ -1,7 +1,7 @@
 import os
 
 def is_vowel(word, pos):
-    vowels = ['а', 'е', 'и', 'о', 'у']
+    vowels = ['а', 'е', 'и', 'о', 'у', 'è']
     letter = word[pos]
     if word[pos] in vowels:
         return True
