@@ -143,9 +143,9 @@ def judges_final_score(poem):
     score += 1000 * last_two_lines_rhyming_judge(poem)
     score += 1000 * syllable_counting_judge(poem, 6)
     score += 20 * enter_lover_judge(poem, 6)
-    score += 100 * same_ending_hater_judge(poem)
-    score += 1000 * long_word_lover_judge(poem)
-    #score += randint(-5, 5)
+    score += 50 * same_ending_hater_judge(poem)
+    score += 100 * long_word_lover_judge(poem)
+    score += 10 * randint(-1, 1)
     return score
 
 def gen_possible_moves(poem):
@@ -158,16 +158,6 @@ def gen_possible_moves(poem):
     for succ in successors:
         moves.append(("add_word", succ))
     return moves
-
-example_poem = Poem(freeze([
-    ['куро', 'ми', 'го', 'јатиш'],
-    ['оревче', 'орев', 'млат'],
-    ['куроти', 'бомбо', 'клат']
-]))
-
-example_poem_2 = Poem(freeze([
-    ['таа']
-]))
 
 def play_move(poem, move):
     if "add_word" in move:
@@ -183,7 +173,7 @@ def find_best_move(poem, recursion_level=0):
     best_move = None
     for move in possible_moves:
         poem_after_move = play_move(poem, move)
-        if recursion_level == 4:
+        if recursion_level == 6:
             score = judges_final_score(poem_after_move)
         else:
             scored_move = find_best_move(poem_after_move, recursion_level+1)
@@ -195,6 +185,16 @@ def find_best_move(poem, recursion_level=0):
             best_score = score
             best_move = move
     return {"move": best_move, "score": best_score}
+
+example_poem = Poem(freeze([
+    ['куро', 'ми', 'го', 'јатиш'],
+    ['оревче', 'орев', 'млат'],
+    ['куроти', 'бомбо', 'клат']
+]))
+
+example_poem_2 = Poem(freeze([
+    ['кога']
+]))
 
 for i in range(50):
     next_move = find_best_move(example_poem_2)
