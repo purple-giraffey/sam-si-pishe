@@ -123,7 +123,7 @@ while True:
                     response = { "results": predecessors[words_tuple] if words_tuple in predecessors else {} }
                 elif decoded_json_object["action"] == "get_successors":
                     words_tuple = tuple(decoded_json_object["words"])
-                    response = { "results": successors[words_tuple] if words_tuple in successors else {} }
+                    response = { "results": successors[words_tuple][:10] if words_tuple in successors else {} }
                 elif decoded_json_object["action"] == "get_random_word_tuple":
                     from_which = decoded_json_object["from_which"]
                     response = find_random_word_tuple(successor_word_len_one if from_which == "successors" else predecessor_word_len_one)
